@@ -1,0 +1,13 @@
+{% extends "index.html"%}
+
+{%block content%}
+    <ul>
+        {% for dict in todo_list %}
+        <li>
+            {{ dict['id'] }}
+            {{ dict['task'] }}
+            {{ dict['status']}}
+        </li>
+{%endfor%}
+    </ul>
+{%endblock%}

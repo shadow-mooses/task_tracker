@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <nav>
+        <a href="/task_add">Manage Tasks</a>
+        <a href="/task_history">Task History</a>
+        <a href="/task_complete">Complete Task</a>
+        <a href="/logout">Logout</a>
+    </nav>
+    <h1>Welcome to Task Tracker v0.2</h1>
+</head>
+<body>
+    <div class='p-3 border bg-light'>
+        {%if username %}
+            <h1> Welcome {{username}} </h1>
+        {% endif %}
+    <div id="content">
+    {%block content%}{%endblock%}
+    </div>
+    </div>
+</body>
+</html>

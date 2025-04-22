@@ -1,0 +1,9 @@
+{% extends "index.html" %}
+
+{% block content %}
+<h1>Add Task Page</h1>
+    <form method= "POST" action = "/task_complete">
+        Which Task to complete? <input type="text" name="complete_task_id" />
+        <input type = "Submit">
+    </form>
+{% endblock %}
