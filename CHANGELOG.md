@@ -13,7 +13,9 @@
 - Added error handling for the task complete function.
 
 ## Need to test/add for v1.5
-- Empty starting dictionary
+- Start with empty dictionary.
+- Add a load task route that loads the previously saved JSON
 - Add task table to the task_complete route so a user doesn't have to refer back to the table.
 - try the back button on the task_complete route or add the top nav.
 - Add more fields to the todo list like a timestamp that it was added and the timestamp when it was completed.
+  
