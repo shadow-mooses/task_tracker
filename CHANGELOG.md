@@ -12,6 +12,11 @@
 - The task_completer function has the same loop, iteration over the dicitonary. Loops over the task ids, adds them to a new dictionary with a index of the list. Then updates the 'status' value from 'not started' to complete.
 - Added error handling for the task complete function.
 
+
+## v1.2
+- Added /task_add route to load tasks from file. New libraries needed: glob, os.
+- 
+
 ## Need to test/add for v1.5
 - Empty starting dictionary
 - Add task table to the task_complete route so a user doesn't have to refer back to the table.

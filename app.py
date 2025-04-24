@@ -1,5 +1,6 @@
 from flask import Flask, request, session, render_template
-import datetime, json
+import datetime, json, glob, os
+
 
 app = Flask(__name__)
 app.secret_key = "secretkey" #this is the session cookie
@@ -12,6 +13,10 @@ todo_list = [
     {'id':2,'task':'nap','status':'Not started'},
     {'id':12,'task':'do dishes','status':'Not started'},
     {'id':4,'task':'clean the car','status':'Not started'}
+]
+
+empty_list = [
+    {'id':0, 'task':None, 'status':'Not started'}
 ]
 
 #these are the registered users
@@ -52,25 +57,13 @@ def dump_json_with_timestamp(data, filename_prefix, directory="."):
         print(f"Error dumping JSON data: {e}")
 
 
-#works - loops through the tasks, creates a dictionary with the task id and the list index. Then pops the index in the todo list.
-#unused since delete API calls can't be done with flask?
-def delete_task(task_num, list):
-    task_list_dict = {}
-    task_list_index = 0
-    for dict in list: #loop through the todo list and create a dictionary of the task ids and the index in the list
-        for value in dict.values():
-            if type(value) == int:
-                task_list_dict[value] = task_list_index
-                task_list_index += 1
-            else:
-                break
-    list.pop(task_list_dict[task_num])
 
-
-
-#works - need to add an out of range raise def task_completer(task_num, list):
+#works - this raises errors for numbers that are out of range or if someone tries to delete the zero index):
 def task_completer(task_num, list):
-    if type(task_num) == int:
+    int_task = int(task_num)
+    if int_task <= 0:
+        raise KeyError('you entered a task number that is out of range')
+    elif type(int_task) == int:
         task_list_dict = {}
         task_list_index = 0
         for dict in list: #loop through the todo list and create a dictionary of the task ids and the index in the list
@@ -80,11 +73,11 @@ def task_completer(task_num, list):
                     task_list_index += 1
                 else:
                     break
-        if task_num in task_list_dict:
-            updated_dict = list[task_list_dict[task_num]]
+        if int_task in task_list_dict:
+            updated_dict = list[task_list_dict[int_task]]
             updated_dict['status'] = 'completed'
             return updated_dict
-        raise KeyError('task_num is out of range')
+        raise KeyError('you entered a task number that is out of range')
     raise TypeError('task_num is not an integer')
 
 #------------ ROUTES ---------------
@@ -109,7 +102,7 @@ def login():
     elif request.method == "GET":
         return render_template("register.html")
     
-#works - this route will remove the session cookie, dump (save) a json file to disk and logout
+#works - this route will remove the session cookie, dump a json file to disk and logout
 @app.route("/logout")
 def logout():
     session.pop("username", None)
@@ -117,47 +110,63 @@ def logout():
     return "Saved and logged out of the task tracker"
 
 
-#works - displays the tasks
+#uat - this needs to display lists n + 1, add top nav to go back to add tasks
 @app.route("/task_history", methods=["GET"])
 def get_history():
     try:
         user = session['username'] #check user
-        return render_template("task_history.html", username=user, todo_list=todo_list)
+        if len(empty_list) == 1:
+            return "Your todo list is empty, add a task!"
+        else:
+            return render_template("task_history.html", username=user, empty_list=empty_list)
     except:
         return render_template ('register.html')
     
 
 
-#works - adds new task and max task id to todo-list variable and naviages to task history
+#UAT - empty list - adds new task and max task id to todo-list variable and naviages to task history
 @app.route("/task_add", methods=["GET","POST"])
 def task_add():
     username = session['username'] #this could be wrong
     if request.method == 'GET':
         return render_template('task_add.html')
     if request.method == 'POST':
-        add_task = request.form.get("add_task")
-        max_key = new_max_key(todo_list)
+        add_task = request.form.get('add_task')
+        max_key = new_max_key(empty_list)
         new_task = {'id':max_key,'task':add_task, 'status':'Not started'}
-        todo_list.append(new_task)
-        return render_template("task_history.html", username=username, add_task=add_task,todo_list=todo_list)
+        empty_list.append(new_task)
+        return render_template("task_history.html", username=username, add_task=add_task,empty_list=empty_list)
     else:
         return 400
 
 
-#remove tasks - this will display the list of tasks with a field (task_key) to remove with a 
-#bootstrap list below to reference
-
+#works - this has a user input to select the task to be deleted.
 @app.route('/task_complete', methods=['POST','GET'])
 def remove_task():
     if request.method == 'GET':
         return render_template('task_complete.html')
     elif request.method == 'POST':
         complete_task_id = request.form.get('complete_task_id')
-        task_completer(complete_task_id,todo_list)
-        return f"{complete_task_id} is completed"
+        task_completer(complete_task_id,empty_list)
+        return f"Task number {complete_task_id} is completed" #update page to include top nave
     else:
         return 'Id not found'
 
+
+@app.route('/task_load', methods = ['PUT'])
+def load_tasks():
+    directory_path = '/Users/will_tang/Documents/GitHub/task_tracker/task_logs'
+    json_files = glob.glob(os.path.join(directory_path, '*.json'))
+    if not json_files:
+        return None
+
+    latest_file = max(json_files, key=os.path.getmtime)
+
+    with open(latest_file, 'r') as f:
+        empty_list = json.load(f)
+    return 
+
+    
 
 
 if __name__ == "__main__":
