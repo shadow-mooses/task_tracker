@@ -1,5 +1,6 @@
-## Task Tracker v0.2
+## Task Tracker v1.0
 This is a basic task tracker web app that uses flask to organize routes or pages to create a general, simple task tracker.
+
 ## Function
 This app allows users to populate a list of taks stored in memory with an index, description and status. A user can 'complete' a task by entering the task id number.
 
