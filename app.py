@@ -127,7 +127,7 @@ def get_history():
 #UAT - empty list - adds new task and max task id to todo-list variable and naviages to task history
 @app.route("/task_add", methods=["GET","POST"])
 def task_add():
-    username = session['username'] #this could be wrong
+    username = session['username']
     if request.method == 'GET':
         return render_template('task_add.html')
     if request.method == 'POST':
@@ -140,7 +140,7 @@ def task_add():
         return 400
 
 
-#works - this has a user input to select the task to be deleted.
+#works - this has a user input to select the task to be completed.
 @app.route('/task_complete', methods=['POST','GET'])
 def remove_task():
     if request.method == 'GET':
@@ -148,7 +148,7 @@ def remove_task():
     elif request.method == 'POST':
         complete_task_id = request.form.get('complete_task_id')
         task_completer(complete_task_id,empty_list)
-        return f"Task number {complete_task_id} is completed" #update page to include top nave
+        return f"Task number {complete_task_id} is completed" #update page to include top nav
     else:
         return 'Id not found'
 

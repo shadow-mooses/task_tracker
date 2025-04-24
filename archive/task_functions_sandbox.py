@@ -10,6 +10,7 @@ todo_list = [
 ]
 
 todo_list2 = [
+    {'id':0,'task':None,'status':'Not started'},
     {'id':1,'task':'sleep','status':'Not started'},
     {'id':2,'task':'nap','status':'Not started'},
     {'id':12,'task':'go to sleep','status':'Not started'}
@@ -83,16 +84,13 @@ def task_completer(task_num, list):
         raise KeyError('task_num is out of range')
     raise TypeError('task_num is not an integer')
 
+
+
 def task_len_checker(list) -> list:
-    list_plus = []
     if len(list) == 1:
         return print('your task list is empty')
     elif len(list) > 1:
-        for task in len(list):
-            
-            list_plus.append(list[task] += 1)
-    return list_plus
-
-
-print(task_len_checker(empty_list))
+        for task in list:
+            print(task)
+print(task_len_checker(todo_list2))
             

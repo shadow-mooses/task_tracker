@@ -14,11 +14,14 @@
 
 
 ## v1.2
-- Added /task_add route to load tasks from file. New libraries needed: glob, os.
-- 
+- fixed the zero index task displayed in history
+- fixed error handling for compeleting tasks or trying to add a string instead of an integer
+- task complete successfully works
+- added a quick line instead of displaying the zero index empty task
 
-## Need to test/add for v1.5
-- Empty starting dictionary
+## Need to add for v1.5
 - Add task table to the task_complete route so a user doesn't have to refer back to the table.
 - try the back button on the task_complete route or add the top nav.
 - Add more fields to the todo list like a timestamp that it was added and the timestamp when it was completed.
+- restrict the task history to check if the user has logged in.
+- load previous json tasks
