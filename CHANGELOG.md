@@ -20,9 +20,9 @@
 - added a quick line instead of displaying the zero index empty task
 - fixed broken links when trying to access routes without logging in and session cookie
 - added a top nav to empty task list route
+- Add task table to the task_complete route so a user doesn't have to refer back to the table.
 
 ## Need to add for v1.5
-- Add task table to the task_complete route so a user doesn't have to refer back to the table.
 - try the back button on the task_complete route or add the top nav.
 - Add more fields to the todo list like a timestamp that it was added and the timestamp when it was completed.
 - restrict the task history to check if the user has logged in.

@@ -110,7 +110,7 @@ def logout():
     return "Logged out and saved your tasks."
 
 
-#uat - this needs to display lists n + 1, add top nav to go back to add tasks
+#works - this needs to display lists n + 1, add top nav to go back to add tasks
 @app.route("/task_history", methods=["GET"])
 def get_history():
     try:
@@ -151,7 +151,7 @@ def remove_task():
         elif request.method == 'POST':
             complete_task_id = request.form.get('complete_task_id')
             task_completer(complete_task_id,empty_list)
-            return render_template('task.updated.html', username=username, complete_task_id=complete_task_id)
+            return render_template('task_updated.html', username=username, complete_task_id=complete_task_id)
     except:
         return render_template('register.html')    
 
