@@ -107,18 +107,18 @@ def login():
 def logout():
     session.pop("username", None)
     dump_json_with_timestamp(todo_list, 'task_log','task_logs')
-    return "Saved and logged out of the task tracker"
+    return "Logged out and saved your tasks."
 
 
 #uat - this needs to display lists n + 1, add top nav to go back to add tasks
 @app.route("/task_history", methods=["GET"])
 def get_history():
     try:
-        user = session['username'] #check user
+        username = session['username']
         if len(empty_list) == 1:
-            return "Your todo list is empty, add a task!"
+            return render_template('empty_task_list.html')
         else:
-            return render_template("task_history.html", username=user, empty_list=empty_list)
+            return render_template("task_history.html", username=username, empty_list=empty_list)
     except:
         return render_template ('register.html')
     
@@ -127,30 +127,33 @@ def get_history():
 #UAT - empty list - adds new task and max task id to todo-list variable and naviages to task history
 @app.route("/task_add", methods=["GET","POST"])
 def task_add():
-    username = session['username']
-    if request.method == 'GET':
-        return render_template('task_add.html')
-    if request.method == 'POST':
-        add_task = request.form.get('add_task')
-        max_key = new_max_key(empty_list)
-        new_task = {'id':max_key,'task':add_task, 'status':'Not started'}
-        empty_list.append(new_task)
-        return render_template("task_history.html", username=username, add_task=add_task,empty_list=empty_list)
-    else:
-        return 400
+    try:
+        username = session['username']
+        if request.method == 'GET':
+            return render_template('task_add.html')
+        if request.method == 'POST':
+            add_task = request.form.get('add_task')
+            max_key = new_max_key(empty_list)
+            new_task = {'id':max_key,'task':add_task, 'status':'Not started'}
+            empty_list.append(new_task)
+            return render_template("task_history.html", username=username, add_task=add_task,empty_list=empty_list)
+    except:
+        return render_template ('register.html')
 
 
 #works - this has a user input to select the task to be completed.
 @app.route('/task_complete', methods=['POST','GET'])
 def remove_task():
-    if request.method == 'GET':
-        return render_template('task_complete.html')
-    elif request.method == 'POST':
-        complete_task_id = request.form.get('complete_task_id')
-        task_completer(complete_task_id,empty_list)
-        return f"Task number {complete_task_id} is completed" #update page to include top nav
-    else:
-        return 'Id not found'
+    try:
+        username = session['username']
+        if request.method == 'GET':
+            return render_template('task_complete.html')
+        elif request.method == 'POST':
+            complete_task_id = request.form.get('complete_task_id')
+            task_completer(complete_task_id,empty_list)
+            return render_template('task.updated.html', username=username, complete_task_id=complete_task_id)
+    except:
+        return render_template('register.html')    
 
 
 @app.route('/task_load', methods = ['PUT'])

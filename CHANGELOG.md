@@ -18,6 +18,8 @@
 - fixed error handling for compeleting tasks or trying to add a string instead of an integer
 - task complete successfully works
 - added a quick line instead of displaying the zero index empty task
+- fixed broken links when trying to access routes without logging in and session cookie
+- added a top nav to empty task list route
 
 ## Need to add for v1.5
 - Add task table to the task_complete route so a user doesn't have to refer back to the table.
