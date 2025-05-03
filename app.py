@@ -57,7 +57,6 @@ def dump_json_with_timestamp(data, filename_prefix, directory="."):
         print(f"Error dumping JSON data: {e}")
 
 
-
 #works - this raises errors for numbers that are out of range or if someone tries to delete the zero index):
 def task_completer(task_num, list):
     int_task = int(task_num)
@@ -123,8 +122,7 @@ def get_history():
         return render_template ('register.html')
     
 
-
-#UAT - empty list - adds new task and max task id to todo-list variable and naviages to task history
+#works - adds new task and max task id to todo-list variable and naviages to task history
 @app.route("/task_add", methods=["GET","POST"])
 def task_add():
     try:
@@ -155,21 +153,33 @@ def remove_task():
     except:
         return render_template('register.html')    
 
-
-@app.route('/task_load', methods = ['PUT'])
+#this is moving through the function but not reassigning values in empty_list
+@app.route('/task_load', methods = ['GET','POST'])
 def load_tasks():
-    directory_path = '/Users/will_tang/Documents/GitHub/task_tracker/task_logs'
-    json_files = glob.glob(os.path.join(directory_path, '*.json'))
-    if not json_files:
-        return None
+    try:
+        username = session['username']
+        if request.method == 'GET':
+            return render_template('task_load.html')
+        if request.method == 'POST':
+            print(empty_list)
+            directory_path = '/Users/will_tang/Documents/GitHub/task_tracker/task_logs'
+            json_files = glob.glob(os.path.join(directory_path, '*.json'))
+            latest_file = max(json_files, key=os.path.getmtime)
 
-    latest_file = max(json_files, key=os.path.getmtime)
+            with open(latest_file, 'r') as f:
+                empty_list = json.load(f)
+            
+            return render_template('task_loaded.html', empty_list=empty_list)
+        else:
+            return "Saved tasks not found!"
 
-    with open(latest_file, 'r') as f:
-        empty_list = json.load(f)
-    return 
 
+            
+    except:
+        return "error loading tasks"
     
+
+
 
 
 if __name__ == "__main__":

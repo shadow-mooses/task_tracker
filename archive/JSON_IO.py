@@ -30,7 +30,7 @@ def dump_json_with_timestamp(data, filename_prefix, directory="."):
 
 #this function needs to loop through all the filenames, find the most recent (timedelta) and save to memory(variable)
 #works - need to append to todo_list variable
-def read_latest_json(directory):
+def read_latest_json(update_list, directory):
     json_files = glob.glob(os.path.join(directory, '*.json'))
     if not json_files:
         return None
@@ -38,17 +38,12 @@ def read_latest_json(directory):
     latest_file = max(json_files, key=os.path.getmtime)
 
     with open(latest_file, 'r') as f:
-        data = json.load(f)
-    return data
+        empty_list = json.load(f)
 
 # Example usage:
 directory_path = '/Users/will_tang/Documents/GitHub/task_tracker/task_logs' # Replace with the actual directory path
 json_data = read_latest_json(directory_path)
 
-if json_data:
-    print(json_data)
-else:
-    print("No JSON files found in the directory.")
 
             
 
