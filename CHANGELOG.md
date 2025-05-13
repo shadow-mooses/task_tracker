@@ -22,8 +22,12 @@
 - added a top nav to empty task list route
 - Add task table to the task_complete route so a user doesn't have to refer back to the table.
 
-## Need to add for v1.5
+## v1.5
+- fixed the load_tasks route. Now appends tasks to any existing tasks saved to memory.
+- fixed error handling for trying to complete a task that was out of range
+
+
+## Need to add for v1.6
 - try the back button on the task_complete route or add the top nav.
-- Add more fields to the todo list like a timestamp that it was added and the timestamp when it was completed.
+- Add more fields to the todo list like a created timestamp and a completed timestamp.
 - restrict the task history to check if the user has logged in.
-- load previous json tasks

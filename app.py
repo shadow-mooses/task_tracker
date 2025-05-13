@@ -7,7 +7,7 @@ app.secret_key = "secretkey" #this is the session cookie
 
 #------------ VARIABLES ---------------
 
-#this is the example todo list  has been updated from a list -> a dictionary to work with the functions iteration
+#this is the example todo list
 todo_list = [
     {'id':1,'task':'sleep','status':'Not started'},
     {'id':2,'task':'nap','status':'Not started'},
@@ -15,6 +15,7 @@ todo_list = [
     {'id':4,'task':'clean the car','status':'Not started'}
 ]
 
+#this is the base todo list that all future tasks will be appended to
 empty_list = [
     {'id':0, 'task':None, 'status':'Not started'}
 ]
@@ -25,8 +26,7 @@ users = [{"username":"William","password":"test"}]
 
 #------------ FUNCTIONS ---------------
 
-
-#this function returns the highest key (integer) in the list of dictionaries in the todo list and adds 1 for the new task.
+#this function returns the highest task 'id' (integer) in the todo list and adds 1 for the new task.
 def new_max_key(list) -> list:
     key_list = []
     for dict in list:
@@ -37,7 +37,6 @@ def new_max_key(list) -> list:
                 break
     return max(key_list) + 1
 
-
 #this checks the login/password of the user against the defined list of users
 def checkUser(username, password):
     for user in users:
@@ -45,7 +44,7 @@ def checkUser(username, password):
             return True
     return False
 
-#this dumps a json in the task_logs directory with a timestamp in the filename
+#this dumps a json in the task_logs directory with a timestamp as the filename
 def dump_json_with_timestamp(data, filename_prefix, directory="."):
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f"{directory}/{filename_prefix}_{timestamp}.json"
@@ -56,8 +55,7 @@ def dump_json_with_timestamp(data, filename_prefix, directory="."):
     except Exception as e:
         print(f"Error dumping JSON data: {e}")
 
-
-#works - this raises errors for numbers that are out of range or if someone tries to delete the zero index):
+#this marks the 'status' key as 'complete' and raises errors if a user tries to update an 'id' that is of range or if someone tries to delete the zero index:
 def task_completer(task_num, list):
     int_task = int(task_num)
     if int_task <= 0:
@@ -79,6 +77,7 @@ def task_completer(task_num, list):
         raise KeyError('you entered a task number that is out of range')
     raise TypeError('task_num is not an integer')
 
+
 #------------ ROUTES ---------------
 
 
@@ -87,7 +86,7 @@ def task_completer(task_num, list):
 def first_route():
     return render_template("register.html")
 
-#works - the user will register and take them to the add task page
+#the user will register and take them to the add task page
 @app.route("/login", methods = ["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -101,15 +100,14 @@ def login():
     elif request.method == "GET":
         return render_template("register.html")
     
-#works - this route will remove the session cookie, dump a json file to disk and logout
+#this route will remove the session cookie, dump a json file to disk and logout
 @app.route("/logout")
 def logout():
     session.pop("username", None)
     dump_json_with_timestamp(todo_list, 'task_log','task_logs')
     return "Logged out and saved your tasks."
 
-
-#works - this needs to display lists n + 1, add top nav to go back to add tasks
+#this displays the task history that is saved to memeory (empty_list)
 @app.route("/task_history", methods=["GET"])
 def get_history():
     try:
@@ -121,8 +119,7 @@ def get_history():
     except:
         return render_template ('register.html')
     
-
-#works - adds new task and max task id to todo-list variable and naviages to task history
+#this adds adds a new task with the new_max_key function
 @app.route("/task_add", methods=["GET","POST"])
 def task_add():
     try:
@@ -138,8 +135,7 @@ def task_add():
     except:
         return render_template ('register.html')
 
-
-#works - this has a user input to select the task to be completed.
+#update needed - completing a task that doesn't exit brings back to login
 @app.route('/task_complete', methods=['POST','GET'])
 def remove_task():
     try:
@@ -151,9 +147,9 @@ def remove_task():
             task_completer(complete_task_id,empty_list)
             return render_template('task_updated.html', username=username, complete_task_id=complete_task_id)
     except:
-        return render_template('register.html')    
+        return "There was an error completing the task, you entered a task id that was out of range."    
 
-#this is moving through the function but not reassigning values in empty_list
+#this addes previous tasks to the original list.
 @app.route('/task_load', methods = ['GET','POST'])
 def load_tasks():
     try:
@@ -161,26 +157,23 @@ def load_tasks():
         if request.method == 'GET':
             return render_template('task_load.html')
         if request.method == 'POST':
-            print(empty_list)
-            directory_path = '/Users/will_tang/Documents/GitHub/task_tracker/task_logs'
+            directory_path = '/Users/will_tang/Documents/GitHub/task_tracker/task_logs'#static directory for loading jsons
             json_files = glob.glob(os.path.join(directory_path, '*.json'))
             latest_file = max(json_files, key=os.path.getmtime)
 
             with open(latest_file, 'r') as f:
-                empty_list = json.load(f)
+                new_tasks = json.load(f)
+
+            for task in new_tasks:
+                empty_list.append(task)#this loops through the new tasks and adds to the empty_list
             
             return render_template('task_loaded.html', empty_list=empty_list)
         else:
             return "Saved tasks not found!"
 
-
-            
     except:
         return "error loading tasks"
     
-
-
-
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=2050)

@@ -4,7 +4,7 @@ import glob
 import os
 
 
-input_todo_list = [
+new_tasks = [
     {'id':1,'task':'sleep','status':'Not started'},
     {'id':2,'task':'nap','status':'Not started'},
     {'id':12,'task':'do dishes','status':'Not started'},
@@ -12,8 +12,9 @@ input_todo_list = [
 ]
 
 
-
-output_todo_list = []
+original_tasks = [{'id':0,
+                     'task':'wake up',
+                     'status':'Not started'}]
 
 #this dumps a json with a filename prefix and a timestamp into a directory of your choice.
 
@@ -30,7 +31,7 @@ def dump_json_with_timestamp(data, filename_prefix, directory="."):
 
 #this function needs to loop through all the filenames, find the most recent (timedelta) and save to memory(variable)
 #works - need to append to todo_list variable
-def read_latest_json(update_list, directory):
+def read_latest_json(list_to_update, directory):
     json_files = glob.glob(os.path.join(directory, '*.json'))
     if not json_files:
         return None
@@ -38,12 +39,21 @@ def read_latest_json(update_list, directory):
     latest_file = max(json_files, key=os.path.getmtime)
 
     with open(latest_file, 'r') as f:
-        empty_list = json.load(f)
+        list_to_update = json.load(f)
+
+    return list_to_update
 
 # Example usage:
 directory_path = '/Users/will_tang/Documents/GitHub/task_tracker/task_logs' # Replace with the actual directory path
-json_data = read_latest_json(directory_path)
 
+#json_data = read_latest_json(output_todo_list, directory_path)
+
+print(f'pre-updated tasks {original_tasks}')
+#we want to add new tasks to original tasks
+for task in new_tasks:
+    original_tasks.append(task)
+
+print(f'updated tasks {original_tasks}')
 
             
 

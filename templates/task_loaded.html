@@ -1,5 +1,14 @@
 {% extends "index.html" %}
 
-{% block content %}
-<h1>Tasks loaded</h1>
+{%block content%}
+    <h1>Tasks loaded!</h1>
+    <ul>
+        {% for dict in empty_list[1:] %}
+        <li>
+            {{ dict['id'] }}
+            {{ dict['task'] }}
+            {{ dict['status']}}
+        </li>
+{%endfor%}
+    </ul>
 {% endblock %}
